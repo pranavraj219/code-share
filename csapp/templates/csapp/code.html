@@ -1,0 +1,38 @@
+{% extends "csapp/base.html" %}
+{% load static %}
+{% block body_block %}
+  <h4>{{post.title}}</h4>
+  <h5>{{post.created_date}}</h5>
+  <h5>{{post.src_lang}}</h5>
+  <textarea data-editor="{{post.src_lang}}" rows="20">{{post.src_code}}
+  </textarea>
+<script src="{% static 'csapp/js/ace/src-min-noconflict/ace.js' %}"></script>
+<script type="text/javascript">
+  $(function () {
+      $('textarea[data-editor]').each(function () {
+          var textarea = $(this);
+          var mode = textarea.data('editor');
+          var editDiv = $('<div>', {
+              position: 'absolute',
+              width: textarea.width(),
+              height: textarea.height(),
+              'class': textarea.attr('class')
+          }).insertBefore(textarea);
+          textarea.css('display', 'none');
+          var editor = ace.edit(editDiv[0]);
+          editor.renderer.setShowGutter(false);
+          editor.getSession().setValue(textarea.val());
+          editor.getSession().setMode("ace/mode/" + mode);
+          editor.setTheme("ace/theme/tomorrow_night");
+          editor.setOptions({
+            readOnly: {{isReadOnly}},
+            fontSize : 18
+          })
+          editor.getSession().on('change', function(){
+            textarea.val(editor.getSession().getValue());
+          });
+      });
+  });
+
+</script>
+{% endblock body_block %}

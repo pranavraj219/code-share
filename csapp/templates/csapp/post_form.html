@@ -1,0 +1,40 @@
+{% extends "csapp/base.html" %}
+{% load static %}
+{% block body_block %}
+  <form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button class="btn btn-primary">Submit</button>
+  </form>
+<script src="{% static 'csapp/js/ace/src-min-noconflict/ace.js' %}"></script>
+{# <script src="{% static 'csapp/js/text_area_ace/ta_ace.js' %}"></script> #}
+<script type="text/javascript">
+// Hook up ACE editor to all textareas with data-editor attribute
+  $(function () {
+      $('textarea[data-editor]').each(function () {
+          var textarea = $(this);
+          var mode = textarea.data('editor');
+          var editDiv = $('<div>', {
+              position: 'absolute',
+              width: textarea.width(),
+              height: textarea.height(),
+              'class': textarea.attr('class')
+          }).insertBefore(textarea);
+          textarea.css('display', 'none');
+          var editor = ace.edit(editDiv[0]);
+          editor.renderer.setShowGutter(false);
+          editor.getSession().setValue(textarea.val());
+          editor.getSession().setMode("ace/mode/" + mode);
+          editor.setTheme("ace/theme/tomorrow_night");
+          editor.setOptions({
+            readOnly: {{isReadOnly}},
+            fontSize : 18
+          })
+          editor.getSession().on('change', function(){
+            textarea.val(editor.getSession().getValue());
+          });
+      });
+  });
+
+</script>
+{% endblock body_block %}
